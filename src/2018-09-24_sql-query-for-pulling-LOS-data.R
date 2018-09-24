@@ -17,6 +17,23 @@ cnx <- odbcConnect("cnx_SPDBSCSTA001")
 
 # 1) copy query in from SQL Server: ------------
 # note: first remove comments 
+# apparently we don't have to clean up tabs and carriage returns?!!
+
+# > example: --------
+# sqlstring <- "select a.continuumid as [aContinID]
+# 	, t.ContinuumId as [tContinID]
+# from [ADTCMart].[ADTC].[vwAdmissionDischargeFact] a 
+# inner join [ADTCMart].[ADTC].[vwTransferFact] t 
+# on a.continuumid = t.continuumid 
+# where adjustedadmissiondate between '2018-03-27' and '2018-03-28'
+# 	and admissionfacilitylongname = 'Lions Gate Hospital'"
+# 
+# df1.losdata <- data.frame(sqlQuery(cnx, sqlstring))
+# df1.losdata[1:10,]
+
+
+
+# > LOS query: ------------
 sqlstring <- "Select [ADTCMart].[ADTC].[vwAdmissionDischargeFact].ContinuumID 
 	, [ADTCMart].[ADTC].[vwTransferFact].ContinuumID 
 , [ADTCMart].[ADTC].[vwAdmissionDischargeFact].AccountNumber 
@@ -39,8 +56,8 @@ full outer join [ADTCMart].[ADTC].[vwTransferFact]
 on [ADTCMart].[ADTC].[vwAdmissionDischargeFact].ContinuumId = [ADTCMart].[ADTC].[vwTransferFact].ContinuumId
 Where (AdmissionFacilityLongName = 'Lions Gate Hospital' ) 
 and (AdmissionFiscalYear = '2018' ) 
-and (AdmissionNursingUnitCode in ('IPS')
-or [ADTCMart].[ADTC].[vwTransferFact].ToNursingUnitCode = 'IPS')
+and (AdmissionNursingUnitCode in ('ICU')
+or [ADTCMart].[ADTC].[vwTransferFact].ToNursingUnitCode = 'ICU')
 and [ADTCMart].[ADTC].[vwTransferFact].TransferDate >= '2017-04-01'   
 order by AdmissionNursingUnitCode
 , [AdjustedAdmissionDate]
@@ -50,13 +67,11 @@ order by AdmissionNursingUnitCode
 
 
 # 2) Cleanup whitespaces: --------------
-sqlstring <- gsub("\\t", "", sqlstring)  # remove tabs 
-sqlstring <- gsub("\\n", "", sqlstring)  # remove carriage returns 
+# sqlstring <- gsub("\\t", "", sqlstring)  # remove tabs 
+# sqlstring <- gsub("\\n", "", sqlstring)  # remove carriage returns 
 
-sqlstring
 
 # 3) Pull data: ---------------
 df1.losdata <- data.frame(sqlQuery(cnx, sqlstring))
 
-df1.losdata[1]
-
+head(df1.losdata)
