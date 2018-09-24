@@ -10,31 +10,24 @@ library("stringr")
 library("sqldf")
 library("RODBC")
 
+# rm(list = ls())
 
-# 0) specify ODBC connection: ----------------
-cnx <- odbcConnect("cnx_SPDBSCSTA001") 
+# 0) specify parameters: ----------------
+cnx <- odbcConnect("cnx_SPDBSCSTA001") # ODBC connection
+nursing.unit <- "ICU"
+site = "Lions Gate Hospital"
+admit.fiscal.year <- "2018"
+transfer.date.after <- "2017-04-01"  # todo: rewrite query to automatically select right transfer date start point
 
 
 # 1) copy query in from SQL Server: ------------
-# note: first remove comments 
-# apparently we don't have to clean up tabs and carriage returns?!!
-
-# > example: --------
-# sqlstring <- "select a.continuumid as [aContinID]
-# 	, t.ContinuumId as [tContinID]
-# from [ADTCMart].[ADTC].[vwAdmissionDischargeFact] a 
-# inner join [ADTCMart].[ADTC].[vwTransferFact] t 
-# on a.continuumid = t.continuumid 
-# where adjustedadmissiondate between '2018-03-27' and '2018-03-28'
-# 	and admissionfacilitylongname = 'Lions Gate Hospital'"
-# 
-# df1.losdata <- data.frame(sqlQuery(cnx, sqlstring))
-# df1.losdata[1:10,]
-
+# note: 
+# > first remove comments 
+# > be careful about spaces being removed in cleanup: eg. "Select x from y" may become "Select xfrom y" 
 
 
 # > LOS query: ------------
-sqlstring <- "Select [ADTCMart].[ADTC].[vwAdmissionDischargeFact].ContinuumID 
+sqlstring <- paste0("Select [ADTCMart].[ADTC].[vwAdmissionDischargeFact].ContinuumID 
 	, [ADTCMart].[ADTC].[vwTransferFact].ContinuumID 
 , [ADTCMart].[ADTC].[vwAdmissionDischargeFact].AccountNumber 
 , [ADTCMart].[ADTC].[vwTransferFact].AccountNum
@@ -49,27 +42,38 @@ sqlstring <- "Select [ADTCMart].[ADTC].[vwAdmissionDischargeFact].ContinuumID
 , FromNursingUnitCode 
 , FromBed
 , [ToNursingUnitCode] 
-, ToBed
+, ToBed 
 
 From [ADTCMart].[ADTC].[vwAdmissionDischargeFact]  
 full outer join [ADTCMart].[ADTC].[vwTransferFact] 
-on [ADTCMart].[ADTC].[vwAdmissionDischargeFact].ContinuumId = [ADTCMart].[ADTC].[vwTransferFact].ContinuumId
-Where (AdmissionFacilityLongName = 'Lions Gate Hospital' ) 
-and (AdmissionFiscalYear = '2018' ) 
-and (AdmissionNursingUnitCode in ('ICU')
-or [ADTCMart].[ADTC].[vwTransferFact].ToNursingUnitCode = 'ICU')
-and [ADTCMart].[ADTC].[vwTransferFact].TransferDate >= '2017-04-01'   
-order by AdmissionNursingUnitCode
+on [ADTCMart].[ADTC].[vwAdmissionDischargeFact].ContinuumId = [ADTCMart].[ADTC].[vwTransferFact].ContinuumId 
+Where (AdmissionFacilityLongName = '", 
+site, 
+"' ) 
+and (AdmissionFiscalYear = '",
+admit.fiscal.year, 
+"' ) 
+and (AdmissionNursingUnitCode in ('", 
+nursing.unit, 
+"') 
+or [ADTCMart].[ADTC].[vwTransferFact].ToNursingUnitCode = '",
+nursing.unit, 
+"') 
+and [ADTCMart].[ADTC].[vwTransferFact].TransferDate >= '", 
+transfer.date.after,   
+"' order by AdmissionNursingUnitCode
 , [AdjustedAdmissionDate]
 , [AdjustedAdmissionTime]
 , [ADTCMart].[ADTC].[vwTransferFact].TransferDate
-, [ADTCMart].[ADTC].[vwTransferFact].TransferTime;"
+, [ADTCMart].[ADTC].[vwTransferFact].TransferTime;")
 
+# sqlstring
 
 # 2) Cleanup whitespaces: --------------
-# sqlstring <- gsub("\\t", "", sqlstring)  # remove tabs 
-# sqlstring <- gsub("\\n", "", sqlstring)  # remove carriage returns 
+sqlstring <- gsub("\\t", "", sqlstring)  # remove tabs 
+sqlstring <- gsub("\\n", "", sqlstring)  # remove carriage returns 
 
+sqlstring
 
 # 3) Pull data: ---------------
 df1.losdata <- data.frame(sqlQuery(cnx, sqlstring))

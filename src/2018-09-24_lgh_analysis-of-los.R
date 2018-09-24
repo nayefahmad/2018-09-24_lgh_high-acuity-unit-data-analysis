@@ -1,20 +1,12 @@
 
 
 #****************************************
-# Analysis of LOS data for 4E, 6E, 6W, 7E, IPS 
+# Analysis of LOS data 
 #****************************************
 
 library("ggplot2")
-library("dplyr")
-library("fitdistrplus")
 
 # rm(list=ls())
-
-
-# Todo: -------------------
-# > endpoints in subtitles of graphs: 2017-10-10? 
-# > check KS statistics of dist. fitting 
-# ******************************
 
 
 # ****************************** 
