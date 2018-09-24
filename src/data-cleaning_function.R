@@ -20,9 +20,9 @@ clean.los <- function(df){
       
       mutate(df, 
              admissionnursingunitcode = as.factor(admissionnursingunitcode), 
-             adjustedadmissiondate = mdy(adjustedadmissiondate), 
-             adjusteddischargedate = mdy(adjusteddischargedate), 
-             transferdate = mdy(transferdate)) %>% 
+             adjustedadmissiondate = ymd(adjustedadmissiondate), 
+             adjusteddischargedate = ymd(adjusteddischargedate), 
+             transferdate = ymd(transferdate)) %>% 
             
             rename(ad.unitcode = admissionnursingunitcode,
                    from.unit = fromnursingunitcode, 
@@ -34,7 +34,7 @@ clean.los <- function(df){
                    t.date = transferdate, 
                    t.time = transfertime) %>% 
             unite(col = id, 
-                  c(a.continuumid, accountnumber), 
+                  c(continuumid, accountnumber), 
                   sep = "-") %>% 
             mutate(id = as.factor(id)) %>% 
             
