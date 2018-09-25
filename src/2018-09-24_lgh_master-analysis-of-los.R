@@ -1,7 +1,7 @@
 
 
 #****************************************
-# Analysis of LOS data 
+# Master script: Analysis of LOS data 
 #****************************************
 
 library("ggplot2")
@@ -15,7 +15,7 @@ library("glue")
 
 # PARAMETERS: ---------
 cnx <- odbcConnect("cnx_SPDBSCSTA001") # ODBC connection
-nursing.unit <- "ICU"
+nursing.unit <- "SCO"
 site = "Lions Gate Hospital"
 admit.fiscal.year <- "2018"
 transfer.date.after <- "2017-04-01"  # todo: rewrite query to automatically select right transfer date start point
