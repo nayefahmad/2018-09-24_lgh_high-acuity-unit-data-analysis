@@ -12,7 +12,7 @@ if object_id('tempdb.dbo.#unitresults') IS NOT NULL drop table #unitresults;
 
 -- Pull all admits to specified Nursing Unit: ----------------------------------------
 -- Set desired Nursing Unit: 
-Declare @nursingunit as varchar(3) = 'ICU'; 
+Declare @nursingunit as varchar(3) = 'NCCU'; 
 
 
 Select a.ContinuumID as [a.ContinuumID]
@@ -38,7 +38,7 @@ into #unitresults
 From [ADTCMart].[ADTC].[vwAdmissionDischargeFact] a 
 	full outer join [ADTCMart].[ADTC].[vwTransferFact] tr
 		on a.ContinuumId = tr.ContinuumId
-			--and a.AccountNumber = tr.AccountNum
+			--and a.AccountNumber = tr.AccountNum  -- this doesn't seem to change anything 
 Where (AdmissionFacilityLongName = 'Lions Gate Hospital' ) 
 	and (AdmissionFiscalYear = '2018' ) 
 	--and AdjustedAdmissionDate > '2017-01-01'		-- just for testing 

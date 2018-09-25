@@ -15,10 +15,11 @@ library("glue")
 
 # PARAMETERS: ---------
 cnx <- odbcConnect("cnx_SPDBSCSTA001") # ODBC connection
-nursing.unit <- "SCO"
+nursing.unit <- "NCU"
 site = "Lions Gate Hospital"
 admit.fiscal.year <- "2018"
 transfer.date.after <- "2017-04-01"  # todo: rewrite query to automatically select right transfer date start point
+y.axis.limit <- 80
 
 
 # pull in clean data, function to calculate LOS, extract arrival timestamps: : 
@@ -44,7 +45,7 @@ split.losdata <- split(df2.losdata.clean, df2.losdata.clean$id)
 los.vec <- 
       lapply(split.losdata,
              los.fn, 
-             nursingunit = "ICU")  %>%  # nursingunit is passed to los.fn
+             nursingunit = nursing.unit)  %>%  # nursingunit is passed to los.fn
       unlist %>% unname 
 str(los.vec)
 summary(los.vec)
@@ -92,7 +93,8 @@ p1_hist <-
       scale_x_continuous(limits=c(-1,85), 
                          breaks=seq(0,85,5), 
                          expand=c(0,0)) + 
-      scale_y_continuous(expand=c(0,0)) + 
+      scale_y_continuous(limits=c(0, y.axis.limit),
+                         expand=c(0,0)) + 
       
       labs(x="LOS in days", 
            y="Number of cases", 
@@ -100,7 +102,9 @@ p1_hist <-
                         site, 
                         " ", 
                         nursing.unit), 
-           subtitle=paste0("FY 2017/18 \nMedian = ", 
+           subtitle=paste0("FY ",
+                           admit.fiscal.year, 
+                           " \nMedian = ", 
                            summary$median %>% as.numeric %>% round(1), 
                            " days; Mean = ",
                            summary$mean %>% as.numeric %>% round(1),
