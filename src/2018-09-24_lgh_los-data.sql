@@ -1,6 +1,6 @@
 
 ----------------------------------------
--- 2017-10-04_LGH_LGH-redevelopment-LOS-data
+-- 2018-09-24_lgh_high-acuity-unit-data-analysis
 ----------------------------------------
 
 ----------------------------------------
@@ -12,7 +12,7 @@ if object_id('tempdb.dbo.#unitresults') IS NOT NULL drop table #unitresults;
 
 -- Pull all admits to specified Nursing Unit: ----------------------------------------
 -- Set desired Nursing Unit: 
-Declare @nursingunit as varchar(3) = 'IPS'; 
+Declare @nursingunit as varchar(3) = 'ICU'; 
 
 
 Select a.ContinuumID as [a.ContinuumID]
@@ -40,11 +40,11 @@ From [ADTCMart].[ADTC].[vwAdmissionDischargeFact] a
 		on a.ContinuumId = tr.ContinuumId
 			--and a.AccountNumber = tr.AccountNum
 Where (AdmissionFacilityLongName = 'Lions Gate Hospital' ) 
-	and (AdmissionFiscalYear >= '2015' ) 
+	and (AdmissionFiscalYear = '2018' ) 
 	--and AdjustedAdmissionDate > '2017-01-01'		-- just for testing 
 	and (AdmissionNursingUnitCode in (@nursingunit)
 		or tr.ToNursingUnitCode = @nursingunit)
-	and tr.TransferDate >= '2014-04-01'  --(FY 14/15) 
+	and tr.TransferDate >= '2017-04-01'  --(FY 14/15) 
 order by AdmissionNursingUnitCode
 	, [AdjustedAdmissionDate]
 	, [AdjustedAdmissionTime]

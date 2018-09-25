@@ -35,9 +35,9 @@ head(df2.losdata.clean)
 # save reformatted data: ----------------
 unloadNamespace("lubridate")
 
-write_csv(df2.losdata.clean,
-          here("results", 
-               "output from src", 
-               "2018-09-24_lgh_clean-los-data.csv"))
+# write_csv(df2.losdata.clean,
+#           here("results", 
+#                "output from src", 
+#                "2018-09-24_lgh_clean-los-data.csv"))
 
 
