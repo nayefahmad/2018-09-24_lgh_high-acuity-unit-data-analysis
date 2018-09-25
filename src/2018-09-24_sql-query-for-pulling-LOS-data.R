@@ -13,11 +13,13 @@ library("RODBC")
 # rm(list = ls())
 
 # 0) specify parameters: ----------------
-cnx <- odbcConnect("cnx_SPDBSCSTA001") # ODBC connection
-nursing.unit <- "ICU"
-site = "Lions Gate Hospital"
-admit.fiscal.year <- "2018"
-transfer.date.after <- "2017-04-01"  # todo: rewrite query to automatically select right transfer date start point
+
+# NOTE: these are specified in the master file 
+# cnx <- odbcConnect("cnx_SPDBSCSTA001") # ODBC connection
+# nursing.unit <- "ICU"
+# site = "Lions Gate Hospital"
+# admit.fiscal.year <- "2018"
+# transfer.date.after <- "2017-04-01"  # todo: rewrite query to automatically select right transfer date start point
 
 
 # 1) copy query in from SQL Server: ------------
